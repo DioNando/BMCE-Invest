@@ -1,0 +1,64 @@
+services:
+    postgres:
+        image: postgres:14
+        container_name: bmce_postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: bmce_db
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - bmce-network
+
+    mysql:
+        image: mysql:8
+        container_name: bmce_mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: bmce_db
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - bmce-network
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: bmce_phpmyadmin
+        restart: unless-stopped
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "8080:80"
+        depends_on:
+            - mysql
+        networks:
+            - bmce-network
+
+    maildev:
+        image: maildev/maildev
+        container_name: bmce_maildev
+        restart: unless-stopped
+        ports:
+            - "1080:1080"
+            - "1025:1025"
+        networks:
+            - bmce-network
+
+networks:
+    bmce-network:
+        driver: bridge
+
+volumes:
+    postgres_data:
+    mysql_data:

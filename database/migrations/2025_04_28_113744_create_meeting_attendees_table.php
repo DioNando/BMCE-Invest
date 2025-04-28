@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('meeting_attendees', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('meeting_id')->constrained()->onDelete('cascade');
+            $table->foreignId('organization_id')->constrained()->onDelete('cascade');
+            $table->enum('role', ['issuer', 'investor']);
             $table->timestamps();
         });
     }

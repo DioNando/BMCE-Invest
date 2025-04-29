@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Room;
 use App\Models\TimeSlot;
@@ -50,11 +51,20 @@ class TimeSlotController extends Controller
         // Handle attendees if present
         if (!empty($request->attendees)) {
             foreach ($request->attendees as $attendeeData) {
-                TimeSlotAttendee::create([
+                $attendeeRecord = [
                     'time_slot_id' => $timeSlot->id,
                     'user_id' => $attendeeData['user_id'],
-                    'role' => $attendeeData['role'],
-                ]);
+                    'status' => Status::PENDING,
+                ];
+
+                // Déterminer le rôle et ajouter l'ID correspondant
+                if (isset($attendeeData['role']) && $attendeeData['role'] === 'issuer') {
+                    $attendeeRecord['issuer_id'] = $attendeeData['user_id'];
+                } elseif (isset($attendeeData['role']) && $attendeeData['role'] === 'investor') {
+                    $attendeeRecord['investor_id'] = $attendeeData['user_id'];
+                }
+
+                TimeSlotAttendee::create($attendeeRecord);
             }
         }
 
@@ -106,11 +116,20 @@ class TimeSlotController extends Controller
 
             // Add new attendees
             foreach ($request->attendees as $attendeeData) {
-                TimeSlotAttendee::create([
+                $attendeeRecord = [
                     'time_slot_id' => $timeSlot->id,
                     'user_id' => $attendeeData['user_id'],
-                    'role' => $attendeeData['role'],
-                ]);
+                    'status' => Status::PENDING,
+                ];
+
+                // Déterminer le rôle et ajouter l'ID correspondant
+                if (isset($attendeeData['role']) && $attendeeData['role'] === 'issuer') {
+                    $attendeeRecord['issuer_id'] = $attendeeData['user_id'];
+                } elseif (isset($attendeeData['role']) && $attendeeData['role'] === 'investor') {
+                    $attendeeRecord['investor_id'] = $attendeeData['user_id'];
+                }
+
+                TimeSlotAttendee::create($attendeeRecord);
             }
         }
 

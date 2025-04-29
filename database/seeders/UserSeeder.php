@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\OrganizationType;
+use App\Enums\Origin;
 use App\Enums\UserRole;
 use App\Models\Organization;
 use App\Models\User;
@@ -70,7 +72,9 @@ class UserSeeder extends Seeder
                 ],
                 'organization' => [
                     'name' => 'BMCE Bank',
-                    'type' => UserRole::ISSUER->value,
+                    'profil' => UserRole::ISSUER->value,
+                    'origin' => Origin::NATIONAL->value,
+                    'organization_type' => OrganizationType::BANQUE->value,
                     'country_id' => $morocco->id,
                     'description' => 'Leading banking institution in Morocco',
                 ]
@@ -86,7 +90,9 @@ class UserSeeder extends Seeder
                 ],
                 'organization' => [
                     'name' => 'Attijariwafa Bank',
-                    'type' => UserRole::ISSUER->value,
+                    'profil' => UserRole::ISSUER->value,
+                    'origin' => Origin::NATIONAL->value,
+                    'organization_type' => OrganizationType::BANQUE->value,
                     'country_id' => $morocco->id,
                     'description' => 'One of the largest commercial banks in Morocco',
                 ]
@@ -102,7 +108,10 @@ class UserSeeder extends Seeder
                 ],
                 'organization' => [
                     'name' => 'Maroc Telecom',
-                    'type' => UserRole::ISSUER->value,
+                    'profil' => UserRole::ISSUER->value,
+                    'origin' => Origin::NATIONAL->value,
+                    'organization_type' => OrganizationType::AUTRE->value,
+                    'organization_type_other' => 'Telecom',
                     'country_id' => $morocco->id,
                     'description' => 'Telecommunications company',
                 ]
@@ -135,8 +144,9 @@ class UserSeeder extends Seeder
                 ],
                 'organization' => [
                     'name' => 'CIMR',
-                    'type' => UserRole::INVESTOR->value,
-                    'organization_type' => 'Caisse de retraite',
+                    'profil' => UserRole::INVESTOR->value,
+                    'origin' => Origin::NATIONAL->value,
+                    'organization_type' => OrganizationType::CAISSE_RETRAITE->value,
                     'country_id' => $morocco->id,
                     'description' => 'Pension fund',
                 ]
@@ -152,8 +162,9 @@ class UserSeeder extends Seeder
                 ],
                 'organization' => [
                     'name' => 'Amundi Asset Management',
-                    'type' => UserRole::INVESTOR->value,
-                    'organization_type' => 'OPCVM',
+                    'profil' => UserRole::INVESTOR->value,
+                    'origin' => Origin::NATIONAL->value,
+                    'organization_type' => OrganizationType::OPCVM->value,
                     'country_id' => $france->id,
                     'description' => 'European asset management company',
                 ]
@@ -169,8 +180,9 @@ class UserSeeder extends Seeder
                 ],
                 'organization' => [
                     'name' => 'BlackRock',
-                    'type' => UserRole::INVESTOR->value,
-                    'organization_type' => 'Fonds d\'investissement',
+                    'profil' => UserRole::INVESTOR->value,
+                    'origin' => Origin::NATIONAL->value,
+                    'organization_type' => OrganizationType::FONDS_INVESTISSEMENT->value,
                     'country_id' => $usa->id,
                     'description' => 'Global investment management corporation',
                 ]

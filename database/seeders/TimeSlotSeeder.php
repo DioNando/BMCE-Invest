@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Status;
 use App\Enums\UserRole;
 use App\Models\TimeSlot;
 use App\Models\TimeSlotAttendee;
@@ -20,8 +21,8 @@ class TimeSlotSeeder extends Seeder
     public function run(): void
     {
         $rooms = Room::all();
-        $issuerOrgs = Organization::where('type', 'issuer')->get();
-        $investorOrgs = Organization::where('type', 'investor')->get();
+        $issuerOrgs = Organization::where('organization_type', 'issuer')->get();
+        $investorOrgs = Organization::where('organization_type', 'investor')->get();
 
         // Récupérer les utilisateurs liés aux organisations
         $issuers = User::whereIn('organization_id', $issuerOrgs->pluck('id'))->get();
@@ -77,20 +78,22 @@ class TimeSlotSeeder extends Seeder
                 TimeSlotAttendee::create([
                     'time_slot_id' => $timeSlot->id,
                     'user_id' => $issuer->id,
-                    'role' => UserRole::ISSUER->value,
+                    'issuer_id' => $issuer->id,
+                    'status' => Status::CONFIRMED,
                 ]);
 
                 // Only add investors if the slot is available
                 if ($isAvailable) {
                     // Add investors (1 for one-on-one, 2-4 for regular slots)
-                    $investorCount = $isOneOnOne ? 1 : rand(2, min(4, $investors->count()));
+                    $investorCount = $isOneOnOne ? 1 : rand(2, $maxInvestors);
                     $slotInvestors = $investors->random($investorCount);
 
                     foreach ($slotInvestors as $investor) {
                         TimeSlotAttendee::create([
                             'time_slot_id' => $timeSlot->id,
                             'user_id' => $investor->id,
-                            'role' => UserRole::INVESTOR->value,
+                            'investor_id' => $investor->id,
+                            'status' => Status::CONFIRMED,
                         ]);
 
                         // 50% chance of adding a question from this investor
@@ -98,7 +101,7 @@ class TimeSlotSeeder extends Seeder
                             Question::create([
                                 'time_slot_id' => $timeSlot->id,
                                 'user_id' => $investor->id,
-                                'question' => $this->getRandomQuestion(),
+                                'question' => 'Question de ' . $investor->name . ' pour ' . $issuer->name . '?',
                                 'is_answered' => false,
                             ]);
                         }
@@ -106,26 +109,5 @@ class TimeSlotSeeder extends Seeder
                 }
             }
         }
-    }
-
-    /**
-     * Get a random sample question.
-     */
-    private function getRandomQuestion()
-    {
-        $questions = [
-            'What are your growth projections for the next fiscal year?',
-            'Can you elaborate on your dividend policy?',
-            'What are the major risks facing your business currently?',
-            'How do you plan to address the challenges in your industry?',
-            'What is your strategy for international expansion?',
-            'Could you discuss your ESG initiatives?',
-            'How is the current economic climate affecting your operations?',
-            'What competitive advantages do you have over your peers?',
-            'What are your capital allocation priorities?',
-            'Could you provide more details about your recent restructuring efforts?',
-        ];
-
-        return $questions[array_rand($questions)];
     }
 }

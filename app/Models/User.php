@@ -76,7 +76,7 @@ class User extends Authenticatable
      */
     public function isInvestor(): bool
     {
-        return $this->organization && $this->organization->type === 'investor';
+        return $this->organization && $this->organization->profil === UserRole::INVESTOR->value;
     }
 
     /**
@@ -84,6 +84,6 @@ class User extends Authenticatable
      */
     public function isIssuer(): bool
     {
-        return $this->organization && $this->organization->type === 'issuer';
+        return $this->organization && $this->organization->profil === UserRole::ISSUER->value;
     }
 }

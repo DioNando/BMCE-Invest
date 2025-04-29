@@ -5,11 +5,11 @@ namespace App\Enums;
 /**
  * Enum representing status types.
  *
- * This enum defines the status of an entity (pending, accepted, refused),
+ * This enum defines the status of an entity (pending, confirmed, refused),
  * along with helper methods to list all available statuses and get human-readable labels.
  *
  * @method static Status PENDING() Pending status
- * @method static Status ACCEPTED() Accepted status
+ * @method static Status CONFIRMED() Confirmed status
  * @method static Status REFUSED() Refused status
  * @method static array all() Returns an array of all available status types
  * @method string label() Returns a human-readable label for the status
@@ -17,7 +17,7 @@ namespace App\Enums;
 enum Status: string
 {
     case PENDING = 'pending';
-    case ACCEPTED = 'accepted';
+    case CONFIRMED = 'confirmed';
     case REFUSED = 'refused';
 
     /**
@@ -29,7 +29,7 @@ enum Status: string
     {
         return [
             self::PENDING,
-            self::ACCEPTED,
+            self::CONFIRMED,
             self::REFUSED,
         ];
     }
@@ -43,7 +43,7 @@ enum Status: string
     {
         return match ($this) {
             self::PENDING => 'Pending',
-            self::ACCEPTED => 'Accepted',
+            self::CONFIRMED => 'Confirmed',
             self::REFUSED => 'Refused',
         };
     }

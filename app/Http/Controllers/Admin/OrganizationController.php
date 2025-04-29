@@ -34,7 +34,8 @@ class OrganizationController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:issuer,investor',
+            'origin' => 'required|in:national,foreign',
+            'profil' => 'required|in:issuer,investor',
             'organization_type' => 'nullable|string|max:255',
             'country_id' => 'required|exists:countries,id',
             'description' => 'nullable|string',
@@ -71,7 +72,8 @@ class OrganizationController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:issuer,investor',
+            'origin' => 'required|in:national,foreign',
+            'profil' => 'required|in:issuer,investor',
             'organization_type' => 'nullable|string|max:255',
             'country_id' => 'required|exists:countries,id',
             'description' => 'nullable|string',

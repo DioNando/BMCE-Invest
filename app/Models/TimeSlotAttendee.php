@@ -37,4 +37,20 @@ class TimeSlotAttendee extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the investor associated with this attendance.
+     */
+    public function investor()
+    {
+        return $this->belongsTo(User::class, 'investor_id');
+    }
+
+    /**
+     * Get the issuer associated with this attendance.
+     */
+    public function issuer()
+    {
+        return $this->belongsTo(User::class, 'issuer_id');
+    }
 }

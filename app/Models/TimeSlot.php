@@ -55,7 +55,6 @@ class TimeSlot extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'time_slot_attendees')
-                    ->withPivot('role')
                     ->withTimestamps();
     }
 
@@ -64,7 +63,9 @@ class TimeSlot extends Model
      */
     public function issuer()
     {
-        return $this->users()->wherePivot('role', 'issuer')->first();
+        return $this->attendees()->whereNotNull('issuer_id')
+                   ->with('issuer')
+                   ->first()?->issuer;
     }
 
     /**
@@ -72,7 +73,10 @@ class TimeSlot extends Model
      */
     public function investors()
     {
-        return $this->users()->wherePivot('role', 'investor')->get();
+        $attendeeRecords = $this->attendees()->whereNotNull('investor_id')->get();
+        return $attendeeRecords->map(function($record) {
+            return $record->investor;
+        });
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Investor;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
 use Illuminate\Http\Request;
@@ -15,25 +16,28 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $organization = $user->organization;
 
-        if (!$organization || $organization->type !== 'investor') {
+        if (!$user->hasRole(UserRole::INVESTOR->value)) {
             return redirect()->route('home')
                              ->with('error', 'You do not have permission to access this page.');
         }
 
-        $meetings = $organization->investorMeetings()
-                                ->with(['room', 'organizations', 'questions' => function($query) use ($user) {
-                                    $query->where('user_id', $user->id);
-                                }])
-                                ->orderBy('start_time')
-                                ->get();
+        $organization = $user->organization;
+
+        // Récupérer les réunions où l'utilisateur participe en tant qu'investisseur
+        $meetings = $user->meetings()
+                        ->wherePivot('role', 'investor')
+                        ->with(['room', 'users', 'questions' => function($query) use ($user) {
+                            $query->where('user_id', $user->id);
+                        }])
+                        ->orderBy('start_time')
+                        ->get();
 
         // Group meetings by date for easier display
         $meetingsByDate = $meetings->groupBy(function($meeting) {
             return $meeting->start_time->format('Y-m-d');
         });
 
-        return view('investor.dashboard', compact('organization', 'meetingsByDate'));
+        return view('investor.dashboard', compact('user', 'organization', 'meetingsByDate'));
     }
 }

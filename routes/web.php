@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Investor\DashboardController as InvestorDashboardController;
+use App\Http\Controllers\Issuer\DashboardController as IssuerDashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -7,9 +10,20 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Redirection du dashboard en fonction du rôle utilisateur
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        if (auth()->user()->hasRole('admin')) {
+            return redirect()->route('admin.dashboard');
+        } elseif (auth()->user()->hasRole('issuer')) {
+            return redirect()->route('issuer.dashboard');
+        } elseif (auth()->user()->hasRole('investor')) {
+            return redirect()->route('investor.dashboard');
+        }
+
+        return redirect()->route('home');
+    })->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -17,54 +31,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// /*
-// |--------------------------------------------------------------------------
-// | Web Routes
-// |--------------------------------------------------------------------------
-// */
+// Routes pour le Dashboard admin
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    // Autres routes d'administration
+});
 
-// // Public routes
-// Route::get('/', [HomeController::class, 'index'])->name('home');
+// Routes pour le Dashboard investisseur
+Route::middleware(['auth', 'role:investor'])->prefix('investor')->name('investor.')->group(function () {
+    Route::get('/dashboard', [InvestorDashboardController::class, 'index'])->name('dashboard');
+    // Autres routes d'investisseur
+});
 
-// // Authentication routes (handled by Laravel Fortify)
-
-// // Protected routes
-// Route::middleware(['auth'])->group(function () {
-//     // Admin routes
-//     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-//         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-//         Route::resources([
-//             'meetings' => MeetingController::class,
-//             'organizations' => OrganizationController::class,
-//             'rooms' => RoomController::class,
-//             'users' => UserController::class,
-//         ]);
-//     });
-
-//     // Investor routes
-//     Route::middleware(['role:investor'])->prefix('investor')->name('investor.')->group(function () {
-//         Route::get('/dashboard', [InvestorDashboardController::class, 'index'])->name('dashboard');
-//         Route::post('/questions', [QuestionController::class, 'store'])->name('questions.store');
-//         Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
-//     });
-
-//     // Issuer routes
-//     Route::middleware(['role:issuer'])->prefix('issuer')->name('issuer.')->group(function () {
-//         Route::get('/dashboard', [IssuerDashboardController::class, 'index'])->name('dashboard');
-//     });
-
-//     // Redirect based on role
-//     Route::get('/dashboard', function () {
-//         if (auth()->user()->hasRole('admin')) {
-//             return redirect()->route('admin.dashboard');
-//         } elseif (auth()->user()->hasRole('issuer')) {
-//             return redirect()->route('issuer.dashboard');
-//         } elseif (auth()->user()->hasRole('investor')) {
-//             return redirect()->route('investor.dashboard');
-//         }
-
-//         return redirect()->route('home');
-//     })->name('dashboard');
-// });
+// Routes pour le Dashboard émetteur
+Route::middleware(['auth', 'role:issuer'])->prefix('issuer')->name('issuer.')->group(function () {
+    Route::get('/dashboard', [IssuerDashboardController::class, 'index'])->name('dashboard');
+    // Autres routes d'émetteur
+});
 
 require __DIR__ . '/auth.php';

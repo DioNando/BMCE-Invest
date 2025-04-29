@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
 use App\Models\Organization;
@@ -57,7 +58,7 @@ class MeetingController extends Controller
 
         $meeting = Meeting::create([
             'room_id' => $validated['room_id'],
-            'created_by_id' => Auth::id(), // Utilisateur actuellement connecté
+            'created_by_id' => Auth::id(), // L'administrateur connecté ou tout autre utilisateur autorisé
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],
             'is_one_on_one' => $validated['is_one_on_one'] ?? false,
@@ -66,14 +67,14 @@ class MeetingController extends Controller
         // Add issuer as attendee
         $meeting->attendees()->create([
             'user_id' => $validated['issuer_id'],
-            'role' => 'issuer',
+            'role' => UserRole::ISSUER->value,
         ]);
 
         // Add investors as attendees
         foreach ($validated['investor_ids'] as $investorId) {
             $meeting->attendees()->create([
                 'user_id' => $investorId,
-                'role' => 'investor',
+                'role' => UserRole::INVESTOR->value,
             ]);
         }
 
@@ -147,14 +148,14 @@ class MeetingController extends Controller
         // Add issuer as attendee
         $meeting->attendees()->create([
             'user_id' => $validated['issuer_id'],
-            'role' => 'issuer',
+            'role' => UserRole::ISSUER->value,
         ]);
 
         // Add investors as attendees
         foreach ($validated['investor_ids'] as $investorId) {
             $meeting->attendees()->create([
                 'user_id' => $investorId,
-                'role' => 'investor',
+                'role' => UserRole::INVESTOR->value,
             ]);
         }
 

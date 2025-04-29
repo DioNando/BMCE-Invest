@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('organizations', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->enum('type', ['issuer', 'investor']);
-            $table->string('organization_type')->nullable();
-            $table->foreignId('country_id')->constrained('countries')->onDelete('cascade');
-            $table->text('description')->nullable();
+            $table->string('name_fr');
+            $table->string('name_en');
+            $table->string('code', 2);
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('organizations');
+        Schema::dropIfExists('countries');
     }
 };

@@ -8,18 +8,18 @@ namespace App\Enums;
  * This enum defines the different types of organisms that can be used in the application,
  * along with helper methods to list all available types and get human-readable labels.
  *
- * @method static TypeOrganisme CAISSE_RETRAITE() Caisse de retraite
- * @method static TypeOrganisme OPCVM() OPCVM
- * @method static TypeOrganisme ASSURANCE() Assurance
- * @method static TypeOrganisme GESTION_SOUS_MANDAT() Gestion Sous Mandat
- * @method static TypeOrganisme BANQUE() Banque
- * @method static TypeOrganisme FONDS_INVESTISSEMENT() Fonds d'investissement
- * @method static TypeOrganisme AUTRE() Autre
+ * @method static OrganizationType CAISSE_RETRAITE() Caisse de retraite
+ * @method static OrganizationType OPCVM() OPCVM
+ * @method static OrganizationType ASSURANCE() Assurance
+ * @method static OrganizationType GESTION_SOUS_MANDAT() Gestion Sous Mandat
+ * @method static OrganizationType BANQUE() Banque
+ * @method static OrganizationType FONDS_INVESTISSEMENT() Fonds d'investissement
+ * @method static OrganizationType AUTRE() Autre
  * @method static array all() Returns an array of all available organism types
  * @method string label() Returns a human-readable French label for the type
  * @method string englishLabel() Returns a human-readable English label for the type
  */
-enum TypeOrganisme: string
+enum OrganizationType: string
 {
     case CAISSE_RETRAITE = 'caisse_retraite';
     case OPCVM = 'opcvm';

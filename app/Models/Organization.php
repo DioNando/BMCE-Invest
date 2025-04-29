@@ -13,7 +13,7 @@ class Organization extends Model
         'name',
         'type',
         'organization_type',
-        'country',
+        'country_id',
         'description',
     ];
 
@@ -23,6 +23,14 @@ class Organization extends Model
     public function user()
     {
         return $this->hasOne(User::class);
+    }
+
+    /**
+     * Get the country that this organization belongs to.
+     */
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
     }
 
     /**

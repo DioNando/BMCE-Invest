@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Meeting;
 use App\Models\MeetingAttendee;
 use App\Models\Organization;
@@ -74,7 +75,7 @@ class MeetingSeeder extends Seeder
                     MeetingAttendee::create([
                         'meeting_id' => $meeting->id,
                         'user_id' => $issuer->id,
-                        'role' => 'issuer',
+                        'role' => UserRole::ISSUER->value,
                     ]);
 
                     // Add investors (1 for one-on-one, 2-4 for regular meetings)
@@ -86,7 +87,7 @@ class MeetingSeeder extends Seeder
                         MeetingAttendee::create([
                             'meeting_id' => $meeting->id,
                             'user_id' => $investor->id,
-                            'role' => 'investor',
+                            'role' => UserRole::INVESTOR->value,
                         ]);
 
                         // 50% chance of adding a question from this investor

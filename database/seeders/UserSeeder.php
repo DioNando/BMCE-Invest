@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Organization;
 use App\Models\User;
+use App\Models\Country;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,10 +23,15 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'phone' => '+212 600000000',
             'position' => 'Administrator',
-            'profile_completed' => true,
+            'status' => true,
         ]);
 
-        $admin->assignRole('admin');
+        $admin->assignRole(UserRole::ADMIN->value);
+
+        // Récupérer les pays par leur nom anglais
+        $morocco = Country::where('name_en', 'Morocco')->first();
+        $france = Country::where('name_en', 'France')->first();
+        $usa = Country::where('name_en', 'United States')->first();
 
         // Create issuers
         $issuers = [
@@ -35,12 +42,12 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000001',
                     'position' => 'CFO',
-                    'profile_completed' => true,
+                    'status' => true,
                 ],
                 'organization' => [
                     'name' => 'BMCE Bank',
-                    'type' => 'issuer',
-                    'country' => 'Morocco',
+                    'type' => UserRole::ISSUER->value,
+                    'country_id' => $morocco->id,
                     'description' => 'Leading banking institution in Morocco',
                 ]
             ],
@@ -51,12 +58,12 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000002',
                     'position' => 'Head of Investor Relations',
-                    'profile_completed' => true,
+                    'status' => true,
                 ],
                 'organization' => [
                     'name' => 'Attijariwafa Bank',
-                    'type' => 'issuer',
-                    'country' => 'Morocco',
+                    'type' => UserRole::ISSUER->value,
+                    'country_id' => $morocco->id,
                     'description' => 'One of the largest commercial banks in Morocco',
                 ]
             ],
@@ -67,12 +74,12 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000003',
                     'position' => 'Financial Director',
-                    'profile_completed' => true,
+                    'status' => true,
                 ],
                 'organization' => [
                     'name' => 'Maroc Telecom',
-                    'type' => 'issuer',
-                    'country' => 'Morocco',
+                    'type' => UserRole::ISSUER->value,
+                    'country_id' => $morocco->id,
                     'description' => 'Telecommunications company',
                 ]
             ],
@@ -88,7 +95,7 @@ class UserSeeder extends Seeder
                 ['organization_id' => $organization->id]
             ));
 
-            $user->assignRole('issuer');
+            $user->assignRole(UserRole::ISSUER->value);
         }
 
         // Create investors
@@ -100,13 +107,13 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000004',
                     'position' => 'Investment Manager',
-                    'profile_completed' => true,
+                    'status' => true,
                 ],
                 'organization' => [
                     'name' => 'CIMR',
-                    'type' => 'investor',
+                    'type' => UserRole::INVESTOR->value,
                     'organization_type' => 'Caisse de retraite',
-                    'country' => 'Morocco',
+                    'country_id' => $morocco->id,
                     'description' => 'Pension fund',
                 ]
             ],
@@ -117,13 +124,13 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+33 123456789',
                     'position' => 'Portfolio Manager',
-                    'profile_completed' => true,
+                    'status' => true,
                 ],
                 'organization' => [
                     'name' => 'Amundi Asset Management',
-                    'type' => 'investor',
+                    'type' => UserRole::INVESTOR->value,
                     'organization_type' => 'OPCVM',
-                    'country' => 'France',
+                    'country_id' => $france->id,
                     'description' => 'European asset management company',
                 ]
             ],
@@ -134,13 +141,13 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+1 2125551234',
                     'position' => 'Senior Investment Officer',
-                    'profile_completed' => true,
+                    'status' => true,
                 ],
                 'organization' => [
                     'name' => 'BlackRock',
-                    'type' => 'investor',
+                    'type' => UserRole::INVESTOR->value,
                     'organization_type' => 'Fonds d\'investissement',
-                    'country' => 'USA',
+                    'country_id' => $usa->id,
                     'description' => 'Global investment management corporation',
                 ]
             ],
@@ -156,7 +163,7 @@ class UserSeeder extends Seeder
                 ['organization_id' => $organization->id]
             ));
 
-            $user->assignRole('investor');
+            $user->assignRole(UserRole::INVESTOR->value);
         }
     }
 }

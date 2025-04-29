@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +21,7 @@ class User extends Authenticatable
         'phone',
         'position',
         'organization_id',
-        'profile_completed',
+        'status',
     ];
 
     protected $hidden = [
@@ -31,7 +32,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'profile_completed' => 'boolean',
+        'status' => 'boolean',
+        'role' => UserRole::class,
     ];
 
     /**
@@ -49,7 +51,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Question::class, 'asked_by_id');
     }
-    
+
     /**
      * Get the meeting attendances for the user.
      */

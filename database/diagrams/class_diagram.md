@@ -7,7 +7,7 @@ classDiagram
         +phone: string
         +position: string
         +organization_id: bigint
-        +profile_completed: boolean
+        +status: boolean
         +created_at: timestamp
         +updated_at: timestamp
         +organization()

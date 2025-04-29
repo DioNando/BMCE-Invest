@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Organization;
+use App\Models\Country;
 use Illuminate\Http\Request;
 
 class OrganizationController extends Controller
@@ -12,7 +14,8 @@ class OrganizationController extends Controller
      */
     public function index()
     {
-        //
+        $organizations = Organization::with('country')->paginate(10);
+        return view('admin.organizations.index', compact('organizations'));
     }
 
     /**
@@ -20,7 +23,8 @@ class OrganizationController extends Controller
      */
     public function create()
     {
-        //
+        $countries = Country::all();
+        return view('admin.organizations.create', compact('countries'));
     }
 
     /**
@@ -28,7 +32,18 @@ class OrganizationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:issuer,investor',
+            'organization_type' => 'nullable|string|max:255',
+            'country_id' => 'required|exists:countries,id',
+            'description' => 'nullable|string',
+        ]);
+
+        $organization = Organization::create($validated);
+
+        return redirect()->route('admin.organizations.index')
+                        ->with('success', 'Organization created successfully.');
     }
 
     /**
@@ -36,7 +51,8 @@ class OrganizationController extends Controller
      */
     public function show(Organization $organization)
     {
-        //
+        $organization->load('country');
+        return view('admin.organizations.show', compact('organization'));
     }
 
     /**
@@ -44,7 +60,8 @@ class OrganizationController extends Controller
      */
     public function edit(Organization $organization)
     {
-        //
+        $countries = Country::all();
+        return view('admin.organizations.edit', compact('organization', 'countries'));
     }
 
     /**
@@ -52,7 +69,18 @@ class OrganizationController extends Controller
      */
     public function update(Request $request, Organization $organization)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:issuer,investor',
+            'organization_type' => 'nullable|string|max:255',
+            'country_id' => 'required|exists:countries,id',
+            'description' => 'nullable|string',
+        ]);
+
+        $organization->update($validated);
+
+        return redirect()->route('admin.organizations.index')
+                        ->with('success', 'Organization updated successfully.');
     }
 
     /**
@@ -60,6 +88,9 @@ class OrganizationController extends Controller
      */
     public function destroy(Organization $organization)
     {
-        //
+        $organization->delete();
+
+        return redirect()->route('admin.organizations.index')
+                        ->with('success', 'Organization deleted successfully.');
     }
 }

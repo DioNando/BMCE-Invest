@@ -25,7 +25,7 @@ class DashboardController extends Controller
 
         // Récupérer les créneaux horaires où l'utilisateur participe en tant qu'émetteur
         $timeSlots = $user->timeSlots()
-                        ->wherePivot('role', 'issuer')
+                        ->where('time_slot_attendees.issuer_id', $user->id)
                         ->with(['room', 'users', 'questions.user'])
                         ->orderBy('start_time')
                         ->get();

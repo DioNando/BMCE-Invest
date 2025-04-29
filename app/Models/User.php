@@ -67,7 +67,6 @@ class User extends Authenticatable
     public function timeSlots()
     {
         return $this->belongsToMany(TimeSlot::class, 'time_slot_attendees')
-                    ->withPivot('role')
                     ->withTimestamps();
     }
 

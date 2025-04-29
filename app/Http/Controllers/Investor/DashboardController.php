@@ -26,7 +26,7 @@ class DashboardController extends Controller
 
         // Récupérer les créneaux horaires où l'utilisateur participe en tant qu'investisseur
         $timeSlots = $user->timeSlots()
-                        ->wherePivot('role', 'investor')
+                        ->where('time_slot_attendees.investor_id', $user->id)
                         ->with(['room', 'users', 'questions' => function($query) use ($user) {
                             $query->where('user_id', $user->id);
                         }])

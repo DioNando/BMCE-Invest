@@ -12,7 +12,10 @@
                     <div class="flex items-center mb-6">
                         <div>
                             <h3 class="text-lg font-medium text-gray-900">Bienvenue, {{ $user->name }}</h3>
-                            <p class="mt-1 text-sm text-gray-500">{{ $user->position }} - {{ $organization->name }}</p>
+                            <p class="mt-1 text-sm text-gray-500">
+                                {{ $user->position }}
+                                {{ $organization ? '- ' . $organization->name : '' }}
+                            </p>
                         </div>
                     </div>
 
@@ -23,18 +26,30 @@
                     @else
                         @foreach ($timeSlotsByDate as $date => $timeSlots)
                             <div class="mt-4">
-                                <h5 class="text-sm font-medium text-gray-700">{{ \Carbon\Carbon::parse($date)->translatedFormat('l d F Y') }}</h5>
+                                <h5 class="text-sm font-medium text-gray-700">
+                                    {{ \Carbon\Carbon::parse($date)->translatedFormat('l d F Y') }}</h5>
 
                                 <div class="mt-2 overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                                     <table class="min-w-full divide-y divide-gray-300">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Heure</th>
-                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Disponibilité</th>
-                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Investisseurs</th>
-                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Salle</th>
-                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Questions</th>
-                                                <th scope="col" class="relative py-3.5 pl-3 pr-4 text-right">Actions</th>
+                                                <th scope="col"
+                                                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                                                    Heure</th>
+                                                <th scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                                    Disponibilité</th>
+                                                <th scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                                    Investisseurs</th>
+                                                <th scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                                    Salle</th>
+                                                <th scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                                    Questions</th>
+                                                <th scope="col" class="relative py-3.5 pl-3 pr-4 text-right">Actions
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200 bg-white">
@@ -46,13 +61,16 @@
                                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">
                                                         {{ $timeSlot->start_time->format('H:i') }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
-                                                        @if($timeSlot->availability)
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    <td
+                                                        class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+                                                        @if ($timeSlot->availability)
+                                                            <span
+                                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                                 Disponible
                                                             </span>
                                                         @else
-                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                            <span
+                                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                                                 Non disponible
                                                             </span>
                                                         @endif
@@ -66,7 +84,8 @@
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                         {{ $timeSlot->questions->count() }}
                                                     </td>
-                                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
+                                                    <td
+                                                        class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                                                         <a href="#" class="text-indigo-600 hover:text-indigo-900">
                                                             Voir
                                                         </a>
@@ -98,10 +117,18 @@
                             <table class="min-w-full divide-y divide-gray-300">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Date</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Créneau</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Investisseur</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Question</th>
+                                        <th scope="col"
+                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Date
+                                        </th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Créneau
+                                        </th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                            Investisseur</th>
+                                        <th scope="col"
+                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Question
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 bg-white">
@@ -116,7 +143,8 @@
                                                 </a>
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                {{ $question->user->name }} ({{ $question->user->organization->name }})
+                                                {{ $question->user->name }}
+                                                ({{ $question->user->organization->name }})
                                             </td>
                                             <td class="px-3 py-4 text-sm text-gray-500">
                                                 {{ $question->question }}
@@ -134,9 +162,13 @@
                             <div class="mt-4 grid gap-4 grid-cols-1 md:grid-cols-2">
                                 @foreach ($timeSlots->take(4) as $timeSlot)
                                     <div class="bg-white p-4 rounded-lg shadow">
-                                        <h5 class="font-medium text-gray-800 mb-2">Créneau du {{ $timeSlot->start_time->format('d/m/Y H:i') }}</h5>
-                                        <p class="text-sm text-gray-600 mb-1">{{ $timeSlot->start_time->format('d/m/Y H:i') }} - {{ $timeSlot->end_time->format('H:i') }}</p>
-                                        <p class="text-sm text-gray-600">{{ $timeSlot->questions->count() }} questions</p>
+                                        <h5 class="font-medium text-gray-800 mb-2">Créneau du
+                                            {{ $timeSlot->start_time->format('d/m/Y H:i') }}</h5>
+                                        <p class="text-sm text-gray-600 mb-1">
+                                            {{ $timeSlot->start_time->format('d/m/Y H:i') }} -
+                                            {{ $timeSlot->end_time->format('H:i') }}</p>
+                                        <p class="text-sm text-gray-600">{{ $timeSlot->questions->count() }} questions
+                                        </p>
 
                                         <div class="mt-4">
                                             <a href="#" class="text-sm text-indigo-600 hover:text-indigo-900">

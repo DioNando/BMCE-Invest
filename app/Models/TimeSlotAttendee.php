@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +13,13 @@ class TimeSlotAttendee extends Model
     protected $fillable = [
         'time_slot_id',
         'user_id',
-        'role',
+        'investor_id',
+        'issuer_id',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => Status::class,
     ];
 
     /**

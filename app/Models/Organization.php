@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\OrganizationType;
+use App\Enums\Origin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use PhpParser\Node\Expr\Cast;
 
 class Organization extends Model
 {
@@ -11,10 +14,18 @@ class Organization extends Model
 
     protected $fillable = [
         'name',
-        'type',
+        'origin',
         'organization_type',
+        'organization_other',
+        'profil',
+        'fiche_bkgr',
         'country_id',
         'description',
+    ];
+
+    protected $casts = [
+        'origin' => Origin::class,
+        'organization_type' => OrganizationType::class,
     ];
 
     /**

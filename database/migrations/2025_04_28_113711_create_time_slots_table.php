@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->boolean('is_one_on_one')->default(false);
-            $table->boolean('availability')->default(true);
+            $table->boolean('availability')->default(false);
             $table->timestamps();
         });
     }

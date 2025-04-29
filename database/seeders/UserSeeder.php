@@ -28,6 +28,30 @@ class UserSeeder extends Seeder
 
         $admin->assignRole(UserRole::ADMIN->value);
 
+        // Example Issuer user
+        $issuerExample = User::create([
+            'name' => 'Example Issuer',
+            'email' => 'issuer@example.com',
+            'password' => Hash::make('password'),
+            'phone' => '+212 611111111',
+            'position' => 'Finance Director',
+            'status' => true,
+        ]);
+
+        $issuerExample->assignRole(UserRole::ISSUER->value);
+
+        // Example Investor user
+        $investorExample = User::create([
+            'name' => 'Example Investor',
+            'email' => 'investor@example.com',
+            'password' => Hash::make('password'),
+            'phone' => '+212 622222222',
+            'position' => 'Portfolio Manager',
+            'status' => true,
+        ]);
+
+        $investorExample->assignRole(UserRole::INVESTOR->value);
+
         // Récupérer les pays par leur nom anglais
         $morocco = Country::where('name_en', 'Morocco')->first();
         $france = Country::where('name_en', 'France')->first();

@@ -23,18 +23,18 @@ class DashboardController extends Controller
 
         $organization = $user->organization;
 
-        // Récupérer les réunions où l'utilisateur participe en tant qu'émetteur
-        $meetings = $user->meetings()
+        // Récupérer les créneaux horaires où l'utilisateur participe en tant qu'émetteur
+        $timeSlots = $user->timeSlots()
                         ->wherePivot('role', 'issuer')
                         ->with(['room', 'users', 'questions.user'])
                         ->orderBy('start_time')
                         ->get();
 
-        // Group meetings by date for easier display
-        $meetingsByDate = $meetings->groupBy(function($meeting) {
-            return $meeting->start_time->format('Y-m-d');
+        // Regrouper les créneaux horaires par date pour un affichage plus facile
+        $timeSlotsByDate = $timeSlots->groupBy(function($timeSlot) {
+            return $timeSlot->start_time->format('Y-m-d');
         });
 
-        return view('issuer.dashboard', compact('user', 'organization', 'meetingsByDate'));
+        return view('issuer.dashboard', compact('user', 'organization', 'timeSlotsByDate', 'timeSlots'));
     }
 }

@@ -34,17 +34,17 @@ class Organization extends Model
     }
 
     /**
-     * Get meetings where this organization's users are participating.
+     * Get time slots where this organization's users are participating.
      */
-    public function meetings()
+    public function timeSlots()
     {
         return $this->hasManyThrough(
-            Meeting::class,
-            MeetingAttendee::class,
+            TimeSlot::class,
+            TimeSlotAttendee::class,
             'user_id',
             'id',
             null,
-            'meeting_id'
+            'time_slot_id'
         )->whereHas('user', function ($query) {
             $query->where('organization_id', $this->id);
         });

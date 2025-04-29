@@ -11,7 +11,7 @@ classDiagram
         +created_at: timestamp
         +updated_at: timestamp
         +organization()
-        +meetings()
+        +timeSlots()
         +questions()
         +hasRole()
     }
@@ -26,16 +26,17 @@ classDiagram
         +created_at: timestamp
         +updated_at: timestamp
         +user()
-        +meetings()
+        +timeSlots()
     }
 
-    class Meeting {
+    class TimeSlot {
         +id: bigint
         +room_id: bigint
         +created_by_id: bigint
         +start_time: datetime
         +end_time: datetime
         +is_one_on_one: boolean
+        +availability: boolean
         +created_at: timestamp
         +updated_at: timestamp
         +room()
@@ -43,26 +44,26 @@ classDiagram
         +questions()
     }
 
-    class MeetingAttendee {
+    class TimeSlotAttendee {
         +id: bigint
-        +meeting_id: bigint
+        +time_slot_id: bigint
         +user_id: bigint
         +role: enum[issuer, investor]
         +created_at: timestamp
         +updated_at: timestamp
-        +meeting()
+        +timeSlot()
         +user()
     }
 
     class Question {
         +id: bigint
-        +meeting_id: bigint
+        +time_slot_id: bigint
         +user_id: bigint
         +question: text
         +is_answered: boolean
         +created_at: timestamp
         +updated_at: timestamp
-        +meeting()
+        +timeSlot()
         +askedBy()
     }
 
@@ -73,7 +74,7 @@ classDiagram
         +location: string
         +created_at: timestamp
         +updated_at: timestamp
-        +meetings()
+        +timeSlots()
     }
 
     class Role {
@@ -87,9 +88,9 @@ classDiagram
     }
 
     User "1" -- "1" Organization : has
-    Meeting "1" -- "many" MeetingAttendee : has
-    User "1" -- "many" MeetingAttendee : participates in
-    Room "1" -- "many" Meeting : hosts
-    Meeting "1" -- "many" Question : has
+    TimeSlot "1" -- "many" TimeSlotAttendee : has
+    User "1" -- "many" TimeSlotAttendee : participates in
+    Room "1" -- "many" TimeSlot : hosts
+    TimeSlot "1" -- "many" Question : has
     User "1" -- "many" Question : asks
     User "many" -- "many" Role : has

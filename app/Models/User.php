@@ -53,19 +53,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the meeting attendances for the user.
+     * Get the time slot attendances for the user.
      */
-    public function meetingAttendances()
+    public function timeSlotAttendances()
     {
-        return $this->hasMany(MeetingAttendee::class);
+        return $this->hasMany(TimeSlotAttendee::class);
     }
 
     /**
-     * Get the meetings this user is attending.
+     * Get the time slots this user is attending.
      */
-    public function meetings()
+    public function timeSlots()
     {
-        return $this->belongsToMany(Meeting::class, 'meeting_attendees')
+        return $this->belongsToMany(TimeSlot::class, 'time_slot_attendees')
                     ->withPivot('role')
                     ->withTimestamps();
     }

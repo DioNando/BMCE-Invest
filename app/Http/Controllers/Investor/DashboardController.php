@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Investor;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
-use App\Models\Meeting;
+use App\Models\TimeSlot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,8 +24,8 @@ class DashboardController extends Controller
 
         $organization = $user->organization;
 
-        // Récupérer les réunions où l'utilisateur participe en tant qu'investisseur
-        $meetings = $user->meetings()
+        // Récupérer les créneaux horaires où l'utilisateur participe en tant qu'investisseur
+        $timeSlots = $user->timeSlots()
                         ->wherePivot('role', 'investor')
                         ->with(['room', 'users', 'questions' => function($query) use ($user) {
                             $query->where('user_id', $user->id);
@@ -33,11 +33,11 @@ class DashboardController extends Controller
                         ->orderBy('start_time')
                         ->get();
 
-        // Group meetings by date for easier display
-        $meetingsByDate = $meetings->groupBy(function($meeting) {
-            return $meeting->start_time->format('Y-m-d');
+        // Group timeSlots by date for easier display
+        $timeSlotsByDate = $timeSlots->groupBy(function($timeSlot) {
+            return $timeSlot->start_time->format('Y-m-d');
         });
 
-        return view('investor.dashboard', compact('user', 'organization', 'meetingsByDate'));
+        return view('investor.dashboard', compact('user', 'organization', 'timeSlotsByDate'));
     }
 }

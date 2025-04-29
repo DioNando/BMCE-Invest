@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
-use App\Models\Meeting;
+use App\Models\TimeSlot;
 use App\Models\Organization;
 use App\Models\Room;
 use App\Models\User;
@@ -28,15 +28,15 @@ class DashboardController extends Controller
             'totalOrganizations' => Organization::count(),
             'issuers' => User::role(UserRole::ISSUER->value)->count(),
             'investors' => User::role(UserRole::INVESTOR->value)->count(),
-            'meetings' => Meeting::count(),
+            'timeSlots' => TimeSlot::count(),
             'rooms' => Room::count(),
         ];
 
-        $recentMeetings = Meeting::with(['room', 'users.organization'])
+        $recentTimeSlots = TimeSlot::with(['room', 'users.organization'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentMeetings'));
+        return view('admin.dashboard', compact('stats', 'recentTimeSlots'));
     }
 }

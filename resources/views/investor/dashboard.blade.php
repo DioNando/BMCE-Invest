@@ -16,12 +16,12 @@
                         </div>
                     </div>
 
-                    <h4 class="text-md font-medium text-gray-700 mt-6">Vos prochaines réunions</h4>
+                    <h4 class="text-md font-medium text-gray-700 mt-6">Vos prochains créneaux horaires</h4>
 
-                    @if ($meetingsByDate->isEmpty())
-                        <p class="text-sm text-gray-500 mt-2">Vous n'avez aucune réunion planifiée.</p>
+                    @if ($timeSlotsByDate->isEmpty())
+                        <p class="text-sm text-gray-500 mt-2">Vous n'avez aucun créneau horaire planifié.</p>
                     @else
-                        @foreach ($meetingsByDate as $date => $meetings)
+                        @foreach ($timeSlotsByDate as $date => $timeSlots)
                             <div class="mt-4">
                                 <h5 class="text-sm font-medium text-gray-700">{{ \Carbon\Carbon::parse($date)->translatedFormat('l d F Y') }}</h5>
 
@@ -30,7 +30,7 @@
                                         <thead class="bg-gray-50">
                                             <tr>
                                                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Heure</th>
-                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Titre</th>
+                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Disponibilité</th>
                                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Émetteur</th>
                                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Salle</th>
                                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Questions</th>
@@ -38,16 +38,24 @@
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200 bg-white">
-                                            @foreach ($meetings as $meeting)
+                                            @foreach ($timeSlots as $timeSlot)
                                                 @php
-                                                    $issuer = $meeting->issuer();
+                                                    $issuer = $timeSlot->issuer();
                                                 @endphp
                                                 <tr>
                                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">
-                                                        {{ $meeting->start_time->format('H:i') }}
+                                                        {{ $timeSlot->start_time->format('H:i') }}
                                                     </td>
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
-                                                        {{ $meeting->title }}
+                                                        @if($timeSlot->availability)
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                                Disponible
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                                Non disponible
+                                                            </span>
+                                                        @endif
                                                     </td>
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                         @if ($issuer)
@@ -57,16 +65,16 @@
                                                         @endif
                                                     </td>
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                        {{ $meeting->room->name }}
+                                                        {{ $timeSlot->room->name }}
                                                     </td>
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                        {{ $meeting->questions->count() }}
+                                                        {{ $timeSlot->questions->count() }}
                                                     </td>
                                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                                                         <a href="#" class="text-indigo-600 hover:text-indigo-900">
                                                             Voir
                                                         </a>
-                                                        @if ($meeting->start_time->isFuture())
+                                                        @if ($timeSlot->start_time->isFuture())
                                                             <a href="#" class="ml-3 text-indigo-600 hover:text-indigo-900">
                                                                 Poser une question
                                                             </a>
@@ -84,7 +92,7 @@
                     <h4 class="text-md font-medium text-gray-700 mt-8">Vos dernières questions</h4>
 
                     @php
-                        $recentQuestions = $user->questions()->with('meeting')->latest()->take(5)->get();
+                        $recentQuestions = $user->questions()->with('timeSlot')->latest()->take(5)->get();
                     @endphp
 
                     @if ($recentQuestions->isEmpty())
@@ -95,7 +103,7 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Date</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Réunion</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Créneau</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Émetteur</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Question</th>
                                     </tr>
@@ -108,12 +116,12 @@
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
                                                 <a href="#" class="text-indigo-600 hover:text-indigo-900">
-                                                    {{ $question->meeting->title }}
+                                                    {{ $question->timeSlot->start_time->format('d/m/Y H:i') }}
                                                 </a>
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 @php
-                                                    $issuer = $question->meeting->issuer();
+                                                    $issuer = $question->timeSlot->issuer();
                                                 @endphp
                                                 @if ($issuer)
                                                     {{ $issuer->name }} ({{ $issuer->organization->name }})
@@ -122,7 +130,7 @@
                                                 @endif
                                             </td>
                                             <td class="px-3 py-4 text-sm text-gray-500">
-                                                {{ $question->content }}
+                                                {{ $question->question }}
                                             </td>
                                         </tr>
                                     @endforeach

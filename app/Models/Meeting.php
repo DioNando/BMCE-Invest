@@ -11,6 +11,7 @@ class Meeting extends Model
 
     protected $fillable = [
         'room_id',
+        'created_by_id',
         'start_time',
         'end_time',
         'is_one_on_one',
@@ -31,6 +32,14 @@ class Meeting extends Model
     }
 
     /**
+     * Get the user who created this meeting.
+     */
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
+    }
+
+    /**
      * Get the attendees records.
      */
     public function attendees()
@@ -39,29 +48,29 @@ class Meeting extends Model
     }
 
     /**
-     * Get the organizations attending this meeting.
+     * Get the users attending this meeting.
      */
-    public function organizations()
+    public function users()
     {
-        return $this->belongsToMany(Organization::class, 'meeting_attendees')
+        return $this->belongsToMany(User::class, 'meeting_attendees')
                     ->withPivot('role')
                     ->withTimestamps();
     }
 
     /**
-     * Get the issuer organization for this meeting.
+     * Get the issuer user for this meeting.
      */
     public function issuer()
     {
-        return $this->organizations()->wherePivot('role', 'issuer')->first();
+        return $this->users()->wherePivot('role', 'issuer')->first();
     }
 
     /**
-     * Get the investor organizations for this meeting.
+     * Get the investor users for this meeting.
      */
     public function investors()
     {
-        return $this->organizations()->wherePivot('role', 'investor')->get();
+        return $this->users()->wherePivot('role', 'investor')->get();
     }
 
     /**

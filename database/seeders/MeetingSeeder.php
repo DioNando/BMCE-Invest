@@ -64,6 +64,7 @@ class MeetingSeeder extends Seeder
                     // Create meeting
                     $meeting = Meeting::create([
                         'room_id' => $room->id,
+                        'created_by_id' => $issuer->id,
                         'start_time' => $startTime,
                         'end_time' => $endTime,
                         'is_one_on_one' => $isOneOnOne,

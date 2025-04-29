@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Meeting;
 use App\Models\Organization;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MeetingController extends Controller
 {
@@ -15,7 +17,7 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        $meetings = Meeting::with(['room', 'organizations'])
+        $meetings = Meeting::with(['room', 'users', 'createdBy'])
                           ->orderBy('start_time')
                           ->paginate(15);
 
@@ -28,8 +30,12 @@ class MeetingController extends Controller
     public function create()
     {
         $rooms = Room::all();
-        $issuers = Organization::where('type', 'issuer')->get();
-        $investors = Organization::where('type', 'investor')->get();
+        $issuerOrgs = Organization::where('type', 'issuer')->get();
+        $investorOrgs = Organization::where('type', 'investor')->get();
+
+        // Get users for each organization type
+        $issuers = User::whereIn('organization_id', $issuerOrgs->pluck('id'))->get();
+        $investors = User::whereIn('organization_id', $investorOrgs->pluck('id'))->get();
 
         return view('admin.meetings.create', compact('rooms', 'issuers', 'investors'));
     }
@@ -41,9 +47,9 @@ class MeetingController extends Controller
     {
         $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
-            'issuer_id' => 'required|exists:organizations,id',
+            'issuer_id' => 'required|exists:users,id',
             'investor_ids' => 'required|array',
-            'investor_ids.*' => 'exists:organizations,id',
+            'investor_ids.*' => 'exists:users,id',
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
             'is_one_on_one' => 'boolean',
@@ -51,6 +57,7 @@ class MeetingController extends Controller
 
         $meeting = Meeting::create([
             'room_id' => $validated['room_id'],
+            'created_by_id' => Auth::id(), // Utilisateur actuellement connecté
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],
             'is_one_on_one' => $validated['is_one_on_one'] ?? false,
@@ -58,14 +65,14 @@ class MeetingController extends Controller
 
         // Add issuer as attendee
         $meeting->attendees()->create([
-            'organization_id' => $validated['issuer_id'],
+            'user_id' => $validated['issuer_id'],
             'role' => 'issuer',
         ]);
 
         // Add investors as attendees
         foreach ($validated['investor_ids'] as $investorId) {
             $meeting->attendees()->create([
-                'organization_id' => $investorId,
+                'user_id' => $investorId,
                 'role' => 'investor',
             ]);
         }
@@ -79,7 +86,7 @@ class MeetingController extends Controller
      */
     public function show(Meeting $meeting)
     {
-        $meeting->load(['room', 'organizations', 'questions.user']);
+        $meeting->load(['room', 'users', 'questions.user', 'createdBy']);
 
         return view('admin.meetings.show', compact('meeting'));
     }
@@ -89,13 +96,18 @@ class MeetingController extends Controller
      */
     public function edit(Meeting $meeting)
     {
-        $meeting->load('organizations');
+        $meeting->load('users');
         $rooms = Room::all();
-        $issuers = Organization::where('type', 'issuer')->get();
-        $investors = Organization::where('type', 'investor')->get();
 
-        $currentIssuer = $meeting->organizations()->wherePivot('role', 'issuer')->first();
-        $currentInvestors = $meeting->organizations()->wherePivot('role', 'investor')->pluck('organizations.id')->toArray();
+        $issuerOrgs = Organization::where('type', 'issuer')->get();
+        $investorOrgs = Organization::where('type', 'investor')->get();
+
+        // Get users for each organization type
+        $issuers = User::whereIn('organization_id', $issuerOrgs->pluck('id'))->get();
+        $investors = User::whereIn('organization_id', $investorOrgs->pluck('id'))->get();
+
+        $currentIssuer = $meeting->users()->wherePivot('role', 'issuer')->first();
+        $currentInvestors = $meeting->users()->wherePivot('role', 'investor')->pluck('users.id')->toArray();
 
         return view('admin.meetings.edit', compact(
             'meeting',
@@ -114,9 +126,9 @@ class MeetingController extends Controller
     {
         $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
-            'issuer_id' => 'required|exists:organizations,id',
+            'issuer_id' => 'required|exists:users,id',
             'investor_ids' => 'required|array',
-            'investor_ids.*' => 'exists:organizations,id',
+            'investor_ids.*' => 'exists:users,id',
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
             'is_one_on_one' => 'boolean',
@@ -134,14 +146,14 @@ class MeetingController extends Controller
 
         // Add issuer as attendee
         $meeting->attendees()->create([
-            'organization_id' => $validated['issuer_id'],
+            'user_id' => $validated['issuer_id'],
             'role' => 'issuer',
         ]);
 
         // Add investors as attendees
         foreach ($validated['investor_ids'] as $investorId) {
             $meeting->attendees()->create([
-                'organization_id' => $investorId,
+                'user_id' => $investorId,
                 'role' => 'investor',
             ]);
         }

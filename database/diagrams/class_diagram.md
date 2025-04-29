@@ -32,6 +32,7 @@ classDiagram
     class Meeting {
         +id: bigint
         +room_id: bigint
+        +created_by_id: bigint
         +start_time: datetime
         +end_time: datetime
         +is_one_on_one: boolean
@@ -56,7 +57,7 @@ classDiagram
     class Question {
         +id: bigint
         +meeting_id: bigint
-        +asked_by_id: bigint
+        +user_id: bigint
         +question: text
         +is_answered: boolean
         +created_at: timestamp

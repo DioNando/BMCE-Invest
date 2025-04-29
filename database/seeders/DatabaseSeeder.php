@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             RoomSeeder::class,
             UserSeeder::class,
-            MeetingSeeder::class,
+            TimeSlotSeeder::class,
         ]);
     }
 }

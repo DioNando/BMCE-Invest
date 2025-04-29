@@ -19,6 +19,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'position',
+        'organization_id',
         'profile_completed',
     ];
 
@@ -38,7 +39,7 @@ class User extends Authenticatable
      */
     public function organization()
     {
-        return $this->hasOne(Organization::class);
+        return $this->belongsTo(Organization::class);
     }
 
     /**
@@ -46,7 +47,25 @@ class User extends Authenticatable
      */
     public function questions()
     {
-        return $this->hasMany(Question::class);
+        return $this->hasMany(Question::class, 'asked_by_id');
+    }
+    
+    /**
+     * Get the meeting attendances for the user.
+     */
+    public function meetingAttendances()
+    {
+        return $this->hasMany(MeetingAttendee::class);
+    }
+
+    /**
+     * Get the meetings this user is attending.
+     */
+    public function meetings()
+    {
+        return $this->belongsToMany(Meeting::class, 'meeting_attendees')
+                    ->withPivot('role')
+                    ->withTimestamps();
     }
 
     /**

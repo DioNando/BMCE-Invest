@@ -25,7 +25,7 @@ classDiagram
         +description: text
         +created_at: timestamp
         +updated_at: timestamp
-        +users()
+        +user()
         +meetings()
     }
 
@@ -45,12 +45,12 @@ classDiagram
     class MeetingAttendee {
         +id: bigint
         +meeting_id: bigint
-        +organization_id: bigint
+        +user_id: bigint
         +role: enum[issuer, investor]
         +created_at: timestamp
         +updated_at: timestamp
         +meeting()
-        +organization()
+        +user()
     }
 
     class Question {
@@ -85,10 +85,9 @@ classDiagram
         +users()
     }
 
-    User "many" -- "1" Organization : belongs to
-    Organization "many" -- "many" Meeting : participates in
+    User "1" -- "1" Organization : has
     Meeting "1" -- "many" MeetingAttendee : has
-    Organization "1" -- "many" MeetingAttendee : has
+    User "1" -- "many" MeetingAttendee : participates in
     Room "1" -- "many" Meeting : hosts
     Meeting "1" -- "many" Question : has
     User "1" -- "many" Question : asks

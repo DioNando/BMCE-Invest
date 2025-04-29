@@ -11,7 +11,7 @@ class MeetingAttendee extends Model
 
     protected $fillable = [
         'meeting_id',
-        'organization_id',
+        'user_id',
         'role',
     ];
 
@@ -24,10 +24,10 @@ class MeetingAttendee extends Model
     }
 
     /**
-     * Get the organization associated with this attendance.
+     * Get the user associated with this attendance.
      */
-    public function organization()
+    public function user()
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(User::class);
     }
 }

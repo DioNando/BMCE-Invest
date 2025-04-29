@@ -7,6 +7,7 @@ use App\Models\MeetingAttendee;
 use App\Models\Organization;
 use App\Models\Question;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 
@@ -18,8 +19,12 @@ class MeetingSeeder extends Seeder
     public function run(): void
     {
         $rooms = Room::all();
-        $issuers = Organization::where('type', 'issuer')->get();
-        $investors = Organization::where('type', 'investor')->get();
+        $issuerOrgs = Organization::where('type', 'issuer')->get();
+        $investorOrgs = Organization::where('type', 'investor')->get();
+
+        // Récupérer les utilisateurs liés aux organisations
+        $issuers = User::whereIn('organization_id', $issuerOrgs->pluck('id'))->get();
+        $investors = User::whereIn('organization_id', $investorOrgs->pluck('id'))->get();
 
         // Conference dates: June 12-13, 2025
         $day1 = Carbon::create(2025, 6, 12, 9, 0, 0);
@@ -67,7 +72,7 @@ class MeetingSeeder extends Seeder
                     // Add issuer as attendee
                     MeetingAttendee::create([
                         'meeting_id' => $meeting->id,
-                        'organization_id' => $issuer->id,
+                        'user_id' => $issuer->id,
                         'role' => 'issuer',
                     ]);
 
@@ -79,7 +84,7 @@ class MeetingSeeder extends Seeder
                     foreach ($meetingInvestors as $investor) {
                         MeetingAttendee::create([
                             'meeting_id' => $meeting->id,
-                            'organization_id' => $investor->id,
+                            'user_id' => $investor->id,
                             'role' => 'investor',
                         ]);
 
@@ -87,7 +92,7 @@ class MeetingSeeder extends Seeder
                         if (rand(1, 100) <= 50) {
                             Question::create([
                                 'meeting_id' => $meeting->id,
-                                'user_id' => $investor->user->id,
+                                'user_id' => $investor->id,
                                 'question' => $this->getRandomQuestion(),
                                 'is_answered' => false,
                             ]);

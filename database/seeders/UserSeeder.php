@@ -35,6 +35,7 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000001',
                     'position' => 'CFO',
+                    'profile_completed' => true,
                 ],
                 'organization' => [
                     'name' => 'BMCE Bank',
@@ -50,6 +51,7 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000002',
                     'position' => 'Head of Investor Relations',
+                    'profile_completed' => true,
                 ],
                 'organization' => [
                     'name' => 'Attijariwafa Bank',
@@ -65,6 +67,7 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000003',
                     'position' => 'Financial Director',
+                    'profile_completed' => true,
                 ],
                 'organization' => [
                     'name' => 'Maroc Telecom',
@@ -76,13 +79,16 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($issuers as $issuerData) {
-            $user = User::create($issuerData['user']);
-            $user->assignRole('issuer');
+            // Créer d'abord l'organisation
+            $organization = Organization::create($issuerData['organization']);
 
-            Organization::create(array_merge(
-                $issuerData['organization'],
-                ['user_id' => $user->id]
+            // Créer l'utilisateur avec une référence à l'organisation
+            $user = User::create(array_merge(
+                $issuerData['user'],
+                ['organization_id' => $organization->id]
             ));
+
+            $user->assignRole('issuer');
         }
 
         // Create investors
@@ -94,6 +100,7 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+212 600000004',
                     'position' => 'Investment Manager',
+                    'profile_completed' => true,
                 ],
                 'organization' => [
                     'name' => 'CIMR',
@@ -110,6 +117,7 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+33 123456789',
                     'position' => 'Portfolio Manager',
+                    'profile_completed' => true,
                 ],
                 'organization' => [
                     'name' => 'Amundi Asset Management',
@@ -126,6 +134,7 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'phone' => '+1 2125551234',
                     'position' => 'Senior Investment Officer',
+                    'profile_completed' => true,
                 ],
                 'organization' => [
                     'name' => 'BlackRock',
@@ -138,13 +147,16 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($investors as $investorData) {
-            $user = User::create($investorData['user']);
-            $user->assignRole('investor');
+            // Créer d'abord l'organisation
+            $organization = Organization::create($investorData['organization']);
 
-            Organization::create(array_merge(
-                $investorData['organization'],
-                ['user_id' => $user->id]
+            // Créer l'utilisateur avec une référence à l'organisation
+            $user = User::create(array_merge(
+                $investorData['user'],
+                ['organization_id' => $organization->id]
             ));
+
+            $user->assignRole('investor');
         }
     }
 }

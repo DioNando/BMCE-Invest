@@ -10,7 +10,6 @@ class Organization extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'name',
         'type',
         'organization_type',
@@ -23,40 +22,23 @@ class Organization extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
     }
 
     /**
-     * Get the meeting attendances for the organization.
-     */
-    public function meetingAttendances()
-    {
-        return $this->hasMany(MeetingAttendee::class);
-    }
-
-    /**
-     * Get the meetings this organization is attending.
+     * Get meetings where this organization's users are participating.
      */
     public function meetings()
     {
-        return $this->belongsToMany(Meeting::class, 'meeting_attendees')
-                    ->withPivot('role')
-                    ->withTimestamps();
-    }
-
-    /**
-     * Get meetings where this organization is an issuer.
-     */
-    public function issuerMeetings()
-    {
-        return $this->meetings()->wherePivot('role', 'issuer');
-    }
-
-    /**
-     * Get meetings where this organization is an investor.
-     */
-    public function investorMeetings()
-    {
-        return $this->meetings()->wherePivot('role', 'investor');
+        return $this->hasManyThrough(
+            Meeting::class,
+            MeetingAttendee::class,
+            'user_id',
+            'id',
+            null,
+            'meeting_id'
+        )->whereHas('user', function ($query) {
+            $query->where('organization_id', $this->id);
+        });
     }
 }

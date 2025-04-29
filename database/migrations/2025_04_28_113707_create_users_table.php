@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone')->nullable();
             $table->string('position')->nullable();
+            $table->foreignId('organization_id')->nullable()->constrained()->onDelete('set null');
             $table->boolean('profile_completed')->default(false);
             $table->rememberToken();
             $table->timestamps();

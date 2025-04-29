@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('investor_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('issuer_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->enum('status', array_column(Status::cases(), 'value'));
+            $table->enum('status', array_column(Status::cases(), 'value'))->default(Status::PENDING->value);
             $table->timestamps();
         });
     }
